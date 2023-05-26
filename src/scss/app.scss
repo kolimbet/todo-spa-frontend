@@ -1,0 +1,10 @@
+@import "../../node_modules/font-awesome/css/font-awesome.min.css";
+
+.top-nav-bg-gradient {
+  background: rgb(30, 64, 175);
+  background: linear-gradient(
+    90deg,
+    rgba(30, 64, 175, 1) 0%,
+    rgba(49, 46, 129, 1) 100%
+  );
+}
