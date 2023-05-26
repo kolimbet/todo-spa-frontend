@@ -11,6 +11,7 @@ const sourceUrls = {
   register: "/api/register",
   nameIsFree: "/api/name-is-free",
   emailIsFree: "/api/email-is-free",
+  tasks: "/api/tasks",
 };
 
 let token = localStorage.getItem("token") ?? null;
@@ -108,6 +109,21 @@ const api = {
         })
         .catch((err) => {
           let message = parseApiError(err);
+          reject(message);
+        });
+    }),
+  /* -------------------------- Tasks -------------------------------- */
+  taskList: () =>
+    new Promise((resolve, reject) => {
+      axios
+        .get(sourceUrls.tasks)
+        .then(({ data }) => {
+          // console.log("api->taskList completed successfuly" /*, data */);
+          resolve(data);
+        })
+        .catch((err) => {
+          let message = parseApiError(err);
+          console.log("ERROR: taskList request error - " + message);
           reject(message);
         });
     }),

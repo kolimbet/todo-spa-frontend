@@ -2,8 +2,10 @@ import { createStore } from "vuex";
 import router from "@/router";
 import api from "@/api.js";
 
+import task from "./modules/task";
+
 export default createStore({
-  modules: {},
+  modules: { task },
   state: {
     authenticated: false,
     user: null,

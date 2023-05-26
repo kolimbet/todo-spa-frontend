@@ -6,11 +6,23 @@
 
     <div class="clearfix mb-0">
       <div class="float-start mb-2 me-2">
-        <button type="button" class="btn lh-1 btn-blue rounded-pill px-3 py-2">
+        <button
+          v-if="page > 1"
+          @click="goPrevPage()"
+          type="button"
+          class="btn lh-1 btn-blue rounded-pill px-3 py-2"
+        >
           Назад
         </button>
-        <span class="px-3 py-2 text-blue-dark">page: <strong>2</strong>/4</span>
-        <button type="button" class="btn lh-1 btn-blue rounded-pill px-3 py-2">
+        <span class="px-3 py-2 text-blue-dark"
+          >page: <strong>{{ page }}</strong> / {{ totalPages }}</span
+        >
+        <button
+          v-if="hasNextPage"
+          @click="goNextPage()"
+          type="button"
+          class="btn lh-1 btn-blue rounded-pill px-3 py-2"
+        >
           Вперёд
         </button>
       </div>
@@ -42,9 +54,16 @@
     <!-- add form -->
     <TaskCreate :is-open="addFormIsOpen" @close="closeAddForm()" />
 
-    <div class="mt-0 row row-cols-1 row-cols-lg-2 gx-0-75rem gy-0-75rem">
-      <TaskItem v-for="task in fakeTasks" :key="task.id" :task="task" />
+    <div
+      v-if="tasks.length"
+      class="mt-0 row row-cols-1 row-cols-lg-2 gx-0-75rem gy-0-75rem"
+    >
+      <TaskItem v-for="task in paginatedTasks" :key="task.id" :task="task" />
     </div>
+    <div v-else-if="hasTasks" class="mb-2 text-center fs-5 text-secondary">
+      No tasks satisfying the conditions were found
+    </div>
+    <div v-else class="mb-2 text-center fs-5 text-secondary">No tasks</div>
   </div>
 </template>
 
@@ -58,60 +77,67 @@ export default {
   components: { TaskItem, TaskCreate, TaskFilter },
   data() {
     return {
+      page: 1,
+      init: false,
       addFormIsOpen: false,
-      fakeTasks: [
-        {
-          id: 6,
-          user_id: 1,
-          title: "test string 6",
-          is_completed: 0,
-          end_date: null,
-        },
-        {
-          id: 5,
-          user_id: 1,
-          title: "test string 5",
-          is_completed: 0,
-          end_date: null,
-        },
-        {
-          id: 4,
-          user_id: 1,
-          title: "test string 4",
-          is_completed: 0,
-          end_date: null,
-        },
-        {
-          id: 3,
-          user_id: 1,
-          title: "test string 3",
-          is_completed: 1,
-          end_date: "2023-04-22 11:39:08",
-        },
-        {
-          id: 2,
-          user_id: 1,
-          title: "test string 2",
-          is_completed: 1,
-          end_date: "2023-04-22 11:39:08",
-        },
-        {
-          id: 1,
-          user_id: 1,
-          title: "test string 1",
-          is_completed: 1,
-          end_date: "2023-04-22 11:39:08",
-        },
-      ],
     };
   },
+  computed: {
+    hasTasks() {
+      return this.$store.state.task.taskList.length;
+    },
+    tasks() {
+      return this.$store.getters["task/sortedTasks"];
+    },
+    totalPages() {
+      return this.tasks.length
+        ? Math.ceil(this.tasks.length / this.$store.state.task.limitOnPage)
+        : 1;
+    },
+    hasNextPage() {
+      return this.totalPages > this.page;
+    },
+    paginatedTasks() {
+      const start = (this.page - 1) * this.$store.state.task.limitOnPage;
+      const end = this.page * this.$store.state.task.limitOnPage;
+      return this.tasks.slice(start, end);
+    },
+  },
   methods: {
+    goNextPage() {
+      if (this.hasNextPage) this.page += 1;
+    },
+    goPrevPage() {
+      if (this.page > 1) this.page -= 1;
+    },
+    goLastPage() {
+      this.page = this.totalPages;
+    },
+    resetPage() {
+      // console.log("ResetPage");
+      this.page = 1;
+    },
+    fixPageAverage() {
+      // console.log("fixPageAverage");
+      if (this.page > this.totalPages || this.page < 1) this.resetPage();
+    },
     toggleAddForm() {
       this.addFormIsOpen = !this.addFormIsOpen;
     },
     closeAddForm() {
       this.addFormIsOpen = false;
     },
+  },
+  watch: {
+    paginatedTasks() {
+      if (this.page > 1 && this.paginatedTasks.length === 0) this.goLastPage();
+    },
+  },
+  created() {
+    this.$store.dispatch("task/initFilters");
+    this.$store.dispatch("task/requestTaskList").then(() => {
+      this.init = true;
+    });
   },
 };
 </script>

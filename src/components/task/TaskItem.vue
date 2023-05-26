@@ -31,6 +31,15 @@ export default {
     task: Object,
   },
   computed: {
+    endTimeString() {
+      if (this.task.is_completed)
+        return new Date(this.task.end_date).toLocaleString("ru", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        });
+      else return "";
+    },
     cardBorderColorClass() {
       return this.task.is_completed ? "border-green" : "border-blue";
     },
@@ -41,7 +50,7 @@ export default {
     },
     announceOfCompletion() {
       return this.task.is_completed
-        ? "Завершено (двойной клик)"
+        ? "Завершено (двойной клик) " + this.endTimeString
         : "Завершить задачу (двойной клик)";
     },
   },

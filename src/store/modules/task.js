@@ -1,0 +1,106 @@
+import api from "@/api";
+
+export default {
+  namespaced: true,
+  state: () => ({
+    taskList: [],
+    filter: "all",
+    filterValues: ["all", "active", "completed"],
+    order: "new",
+    orderValues: ["new", "old"],
+    limitOnPage: 20,
+    limitOnPageValues: [10, 20, 30, 40, 50],
+  }),
+  getters: {
+    filteredTasks(state) {
+      switch (state.filter) {
+        case "active":
+          return state.taskList.filter((task) => task.is_completed == false);
+        case "completed":
+          return state.taskList.filter((task) => task.is_completed == true);
+        default:
+          return state.taskList;
+      }
+    },
+    sortedTasks(state, getters) {
+      switch (state.order) {
+        case "old":
+          return getters.filteredTasks.sort((a, b) => {
+            if (a.is_completed > b.is_completed) return 1;
+            if (a.is_completed < b.is_completed) return -1;
+            if (a.is_completed) {
+              if (a.end_date > b.end_date) return 1;
+              if (a.end_date < b.end_date) return -1;
+              return 0;
+            } else {
+              if (a.id > b.id) return 1;
+              return -1;
+            }
+          });
+        case "new":
+        default:
+          return getters.filteredTasks.sort((a, b) => {
+            if (a.is_completed > b.is_completed) return 1;
+            if (a.is_completed < b.is_completed) return -1;
+            if (a.is_completed) {
+              if (a.end_date > b.end_date) return -1;
+              if (a.end_date < b.end_date) return 1;
+              return 0;
+            } else {
+              if (a.id > b.id) return -1;
+              return 1;
+            }
+          });
+      }
+    },
+  },
+  mutations: {
+    setTaskList(state, tasks) {
+      state.taskList = tasks;
+    },
+    setFilter(state, option) {
+      if (state.filterValues.includes(option)) {
+        state.filter = option;
+        localStorage.setItem("task.filter", option);
+      }
+    },
+    setOrder(state, option) {
+      if (state.orderValues.includes(option)) {
+        state.order = option;
+        localStorage.setItem("task.order", option);
+      }
+    },
+    setLimitOnPage(state, option) {
+      option = parseInt(option);
+      if (state.limitOnPageValues.includes(option)) {
+        state.limitOnPage = option;
+        localStorage.setItem("task.limitOnPage", option);
+      }
+    },
+  },
+  actions: {
+    initFilters({ commit }) {
+      if (localStorage.getItem("task.filter") !== null) {
+        commit("setFilter", localStorage.getItem("task.filter"));
+      }
+      if (localStorage.getItem("task.order") !== null) {
+        commit("setOrder", localStorage.getItem("task.order"));
+      }
+      if (localStorage.getItem("task.limitOnPage") !== null) {
+        commit("setLimitOnPage", localStorage.getItem("task.limitOnPage"));
+      }
+    },
+
+    requestTaskList({ commit }) {
+      return api
+        .taskList()
+        .then((tasks) => {
+          commit("setTaskList", tasks);
+        })
+        .catch((err) => {
+          commit("setTaskList", []);
+          throw err;
+        });
+    },
+  },
+};
