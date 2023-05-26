@@ -11,6 +11,10 @@ $custom-theme-colors: (
   "blue": $blue-600,
   "blue-light": $blue-100,
   "blue-dark": $blue-700,
+  "green": $green-500,
+  "green-dark": $green-600,
+  "red": $red-600,
+  "red-dark": $red-700,
 );
 $theme-colors: map-merge($theme-colors, $custom-theme-colors);
 $theme-colors-rgb: map-loop($theme-colors, to-rgb, "$value");
@@ -40,6 +44,13 @@ $custom-font-sizes: (
   "3xs": $xxxs-font-size,
 );
 $font-sizes: map-merge($font-sizes, $custom-font-sizes);
+
+// For getter (bs5 grid), gap (grid), margin, padding
+$custom-spacers: (
+  "0-75rem": $spacer * 0.75,
+  "1-25rem": $spacer * 1.25,
+);
+$spacers: map-merge($spacers, $custom-spacers);
 
 @import "../../node_modules/bootstrap/scss/maps";
 @import "../../node_modules/bootstrap/scss/mixins";
@@ -145,6 +156,7 @@ $utilities: map-merge(
       property: height,
       class: h,
       values: (
+        0: 0,
         1: 0.25rem,
         2: 0.5rem,
         3: 0.75rem,
