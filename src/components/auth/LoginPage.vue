@@ -5,14 +5,31 @@
       class="mb-4 d-flex justify-content-center align-items-center min-vh-50"
     >
       <div class="w-percent-100 mw-md">
+        <!-- Request Error -->
+        <div v-if="requestErrorTrigger" class="mb-4">
+          <ValidateError
+            :error="requestError"
+            :reload-trigger="triggerForReloadingErrors"
+          />
+        </div>
+
         <div class="mb-4">
           <label for="form-email" class="fs-sm text-secondary">Email</label>
           <input
+            v-model="form.email"
             id="form-email"
             type="email"
             class="form-control"
             placeholder="Email"
           />
+          <template v-if="v$.form.email.$error">
+            <ValidateError
+              v-for="error in v$.form.email.$errors"
+              :key="error.$uid"
+              :error="error"
+              :reloadTrigger="triggerForReloadingErrors"
+            />
+          </template>
         </div>
 
         <div class="mb-4">
@@ -20,15 +37,25 @@
             >Password</label
           >
           <input
+            v-model="form.password"
             id="form-password"
             type="password"
             class="form-control"
             placeholder="Password"
           />
+          <template v-if="v$.form.password.$error">
+            <ValidateError
+              v-for="error in v$.form.password.$errors"
+              :key="error.$uid"
+              :error="error"
+              :reloadTrigger="triggerForReloadingErrors"
+            />
+          </template>
         </div>
 
         <div class="mb-4 form-check">
           <input
+            v-model="form.remember"
             id="remember-me"
             name="remember"
             type="checkbox"
@@ -61,7 +88,7 @@
                 />
               </svg>
             </span>
-            Sign in
+            {{ processing ? "Please wait" : "Sign in" }}
           </button>
         </div>
 
@@ -79,14 +106,77 @@
 </template>
 
 <script>
+import { useVuelidate } from "@vuelidate/core";
+import { required, email } from "@vuelidate/validators";
+import ValidateError from "../inc/ValidateError.vue";
+
 export default {
   name: "LoginPage",
+  components: { ValidateError },
+  setup() {
+    return {
+      v$: useVuelidate({
+        $lazy: true,
+      }),
+    };
+  },
+  validations() {
+    return {
+      form: {
+        email: {
+          required,
+          email,
+        },
+        password: {
+          required,
+        },
+      },
+    };
+  },
+  data() {
+    return {
+      form: {
+        email: "",
+        password: "",
+        remember: false,
+      },
+      processing: false,
+      triggerForReloadingErrors: true,
+      requestErrorTrigger: false,
+      requestError: {
+        $message: "",
+      },
+    };
+  },
   methods: {
     login() {
-      this.$store.dispatch("login").then((userData) => {
-        console.log(`Вы успешно вошли как ${userData.name}`);
-        this.$router.replace({ name: "home" });
+      this.processing = true;
+      this.reloadingErrorMessages();
+      this.requestErrorTrigger = false;
+      this.v$.$validate().then(() => {
+        if (this.v$.$invalid) {
+          this.processing = false;
+        } else {
+          this.$store
+            .dispatch("login", this.form)
+            .then((userData) => {
+              this.form.email = this.form.password = "";
+              console.log(`Вы успешно вошли как ${userData.name}`);
+              this.$router.replace({ name: "home" });
+            })
+            .catch((err) => {
+              // console.log("login() catch:", err);
+              this.requestError.$message = err;
+              this.requestErrorTrigger = true;
+            })
+            .finally(() => {
+              this.processing = false;
+            });
+        }
       });
+    },
+    reloadingErrorMessages() {
+      this.triggerForReloadingErrors = !this.triggerForReloadingErrors;
     },
   },
 };

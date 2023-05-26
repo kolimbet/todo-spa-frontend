@@ -49,6 +49,9 @@
 </template>
 
 <script>
+import { nextTick } from "vue";
+import { parseErrorObject } from "../../lib/errors";
+
 export default {
   name: "AuthElement",
   computed: {
@@ -64,7 +67,16 @@ export default {
   },
   methods: {
     logout() {
-      this.$store.dispatch("logout");
+      this.$store
+        .dispatch("logout")
+        .then(() => {
+          nextTick(() => {
+            this.$router.go(this.$route.path);
+          });
+        })
+        .catch((err) => {
+          console.log("Error: " + parseErrorObject(err));
+        });
     },
   },
 };

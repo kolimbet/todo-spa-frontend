@@ -14,6 +14,7 @@ $custom-theme-colors: (
   "green": $green-500,
   "green-dark": $green-600,
   "red": $red-600,
+  "red-light": $red-100,
   "red-dark": $red-700,
 );
 $theme-colors: map-merge($theme-colors, $custom-theme-colors);
@@ -329,6 +330,31 @@ $utilities: map-merge(
         100: 1,
       ),
     ),
+    // SVG utilities
+    "fill":
+      (
+        property: fill,
+        class: fill,
+        state: hover,
+        local-vars: (
+          "text-opacity": 1,
+        ),
+        values:
+          map-merge(
+            $utilities-text-colors,
+            (
+              "none": none,
+              "inherit": inherit,
+              "current": currentColor,
+              "transparent": transparent,
+              // additional colors
+              "muted": $text-muted,
+              "black-50": rgba($black, 0.5),
+              // deprecated
+              "white-50": rgba($white, 0.5),
+            )
+          ),
+      ),
   )
 );
 
