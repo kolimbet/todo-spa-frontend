@@ -58,6 +58,19 @@ export default {
     setTaskList(state, tasks) {
       state.taskList = tasks;
     },
+    deleteTask(state, deletedTask) {
+      state.taskList.splice(
+        state.taskList.findIndex((task) => task.id === deletedTask.id),
+        1
+      );
+    },
+    updateTask(state, changedTask) {
+      state.taskList.splice(
+        state.taskList.findIndex((task) => task.id === changedTask.id),
+        1,
+        changedTask
+      );
+    },
     setFilter(state, option) {
       if (state.filterValues.includes(option)) {
         state.filter = option;
@@ -101,6 +114,26 @@ export default {
           commit("setTaskList", []);
           throw err;
         });
+    },
+
+    deleteTask({ commit }, deletedTask) {
+      return api.taskDelete(deletedTask.id).then(() => {
+        commit("deleteTask", deletedTask);
+      });
+    },
+
+    completeTask({ commit }, task) {
+      return api
+        .taskComplete(task.id, task.is_completed)
+        .then((changedTask) => {
+          commit("updateTask", changedTask);
+        });
+    },
+
+    updateTaskTitle({ commit }, task) {
+      return api.taskTitle(task.id, task.title).then((changedTask) => {
+        commit("updateTask", changedTask);
+      });
     },
   },
 };

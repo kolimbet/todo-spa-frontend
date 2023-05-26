@@ -127,6 +127,50 @@ const api = {
           reject(message);
         });
     }),
+  taskDelete: (id) =>
+    new Promise((resolve, reject) => {
+      axios
+        .delete(sourceUrls.tasks + "/" + id)
+        .then(() => {
+          // console.log("api->taskDelete completed successfully");
+          resolve(true);
+        })
+        .catch((err) => {
+          let message = parseApiError(err);
+          console.log("ERROR: taskDelete request error - " + message);
+          reject(message);
+        });
+    }),
+  taskComplete: (id, status) =>
+    new Promise((resolve, reject) => {
+      axios
+        .post(sourceUrls.tasks + `/${id}/completing`, {
+          is_completed: status,
+        })
+        .then(({ data }) => {
+          // console.log("api->taskComplete completed successfully");
+          resolve(data);
+        })
+        .catch((err) => {
+          let message = parseApiError(err);
+          console.log("ERROR: taskComplete request error - " + message);
+          reject(message);
+        });
+    }),
+  taskTitle: (id, title) =>
+    new Promise((resolve, reject) => {
+      axios
+        .post(sourceUrls.tasks + `/${id}/updating-title`, { title: title })
+        .then(({ data }) => {
+          // console.log("api->taskTitle completed successfully");
+          resolve(data);
+        })
+        .catch((err) => {
+          let message = parseApiError(err);
+          console.log("ERROR: taskTitle request error - " + message);
+          reject(message);
+        });
+    }),
 };
 
 export default api;
