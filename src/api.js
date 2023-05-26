@@ -8,6 +8,9 @@ const sourceUrls = {
   login: "/api/login",
   logout: "/api/logout",
   user: "/api/user",
+  register: "/api/register",
+  nameIsFree: "/api/name-is-free",
+  emailIsFree: "/api/email-is-free",
 };
 
 let token = localStorage.getItem("token") ?? null;
@@ -72,6 +75,41 @@ const api = {
             reject("ERROR: " + parseApiError(err));
           });
       }
+    }),
+  register: (regData) =>
+    new Promise((resolve, reject) => {
+      axios
+        .post(sourceUrls.register, regData)
+        .then(() => {
+          resolve(true);
+        })
+        .catch((err) => {
+          reject("ERROR: " + parseApiError(err));
+        });
+    }),
+  nameIsFree: (name) =>
+    new Promise((resolve, reject) => {
+      axios
+        .post(sourceUrls.nameIsFree, { name })
+        .then(({ data }) => {
+          resolve(data);
+        })
+        .catch((err) => {
+          const message = parseApiError(err);
+          reject(message);
+        });
+    }),
+  emailIsFree: (email) =>
+    new Promise((resolve, reject) => {
+      axios
+        .post(sourceUrls.emailIsFree, { email })
+        .then(({ data }) => {
+          resolve(data);
+        })
+        .catch((err) => {
+          let message = parseApiError(err);
+          reject(message);
+        });
     }),
 };
 
