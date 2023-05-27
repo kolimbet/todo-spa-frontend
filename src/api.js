@@ -123,7 +123,7 @@ const api = {
         })
         .catch((err) => {
           let message = parseApiError(err);
-          console.log("ERROR: taskList request error - " + message);
+          // console.log("ERROR: taskList request error - " + message);
           reject(message);
         });
     }),
@@ -137,7 +137,7 @@ const api = {
         })
         .catch((err) => {
           let message = parseApiError(err);
-          console.log("ERROR: taskDelete request error - " + message);
+          // console.log("ERROR: taskDelete request error - " + message);
           reject(message);
         });
     }),
@@ -153,7 +153,7 @@ const api = {
         })
         .catch((err) => {
           let message = parseApiError(err);
-          console.log("ERROR: taskComplete request error - " + message);
+          // console.log("ERROR: taskComplete request error - " + message);
           reject(message);
         });
     }),
@@ -167,7 +167,21 @@ const api = {
         })
         .catch((err) => {
           let message = parseApiError(err);
-          console.log("ERROR: taskTitle request error - " + message);
+          // console.log("ERROR: taskTitle request error - " + message);
+          reject(message);
+        });
+    }),
+  taskCreate: (newTask) =>
+    new Promise((resolve, reject) => {
+      axios
+        .post(sourceUrls.tasks, newTask)
+        .then(({ data }) => {
+          // console.log("api->taskCreate completed successfully", data);
+          resolve(data);
+        })
+        .catch((err) => {
+          let message = parseApiError(err);
+          // console.log("ERROR: taskCreate request error - " + message);
           reject(message);
         });
     }),

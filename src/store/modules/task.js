@@ -71,6 +71,9 @@ export default {
         changedTask
       );
     },
+    addTask(state, newTask) {
+      state.taskList.push(newTask);
+    },
     setFilter(state, option) {
       if (state.filterValues.includes(option)) {
         state.filter = option;
@@ -133,6 +136,12 @@ export default {
     updateTaskTitle({ commit }, task) {
       return api.taskTitle(task.id, task.title).then((changedTask) => {
         commit("updateTask", changedTask);
+      });
+    },
+
+    createTask({ commit }, task) {
+      return api.taskCreate(task).then((newTask) => {
+        commit("addTask", newTask);
       });
     },
   },

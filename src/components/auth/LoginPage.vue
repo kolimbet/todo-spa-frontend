@@ -161,6 +161,7 @@ export default {
             .dispatch("login", this.form)
             .then((userData) => {
               this.form.email = this.form.password = "";
+              this.v$.$reset();
               console.log(`Вы успешно вошли как ${userData.name}`);
               this.$router.replace({ name: "home" });
             })
