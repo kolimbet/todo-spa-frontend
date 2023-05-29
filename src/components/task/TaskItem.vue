@@ -5,15 +5,13 @@
       :class="[cardBorderColorClass]"
     >
       <div class="w-percent-100">
-        <div
-          v-if="requestErrorTrigger"
-          class="mb-2 d-flex justify-content-center"
-        >
-          <ValidateError
-            :error="requestError"
-            :reloadTrigger="triggerForReloadingErrors"
-          />
-        </div>
+        <!-- Request Error -->
+        <ErrorSingle
+          :is-error="requestErrorTrigger"
+          :error-object="requestError"
+          :reload-trigger="triggerForReloadingErrors"
+          class="mb-2"
+        />
 
         <div class="d-flex align-items-center gap-0-75rem">
           <div
@@ -34,14 +32,11 @@
               rows="3"
               class="form-control w-percent-100 mb-2"
             ></textarea>
-            <template v-if="v$.form.title.$error">
-              <ValidateError
-                v-for="error of v$.form.title.$errors"
-                :key="error.$uid"
-                :error="error"
-                :reloadTrigger="triggerForReloadingErrors"
-              />
-            </template>
+
+            <ErrorList
+              :error-list="v$.form.title.$errors"
+              :reload-trigger="triggerForReloadingErrors"
+            />
 
             <div
               class="mt-2 d-flex justify-content-center align-items-center gap-0-75rem"
@@ -93,11 +88,12 @@
 import { parseErrorObject } from "@/lib/errors.js";
 import { useVuelidate } from "@vuelidate/core";
 import { required, minLength, maxLength } from "@vuelidate/validators";
-import ValidateError from "../inc/ValidateError.vue";
+import ErrorSingle from "../inc/ErrorSingle.vue";
+import ErrorList from "../inc/ErrorList.vue";
 
 export default {
   name: "TaskItem",
-  components: { ValidateError },
+  components: { ErrorSingle, ErrorList },
   props: {
     task: Object,
   },

@@ -1,10 +1,9 @@
 <template>
   <div
-    v-if="!isHidden"
     class="mt-1 px-3 py-1 d-flex align-items-center justify-content-between rounded-2 border border-red border-opacity-50 bg-red-light text-red-dark"
   >
     <span>{{ error.$message }}</span>
-    <span @click="close()" class="px-0-75rem py-1 cursor-pointer">
+    <span @click="$emit('close')" class="px-0-75rem py-1 cursor-pointer">
       <svg
         class="h-5 w-5 fill-current text-red text-red-dark-hover"
         role="button"
@@ -22,20 +21,10 @@
 
 <script>
 export default {
-  name: "ValidateError",
+  name: "ErrorMessage",
   props: {
     error: Object,
-    reloadTrigger: Boolean,
   },
-  data() {
-    return {
-      isHidden: false,
-    };
-  },
-  methods: {
-    close() {
-      this.isHidden = true;
-    },
-  },
+  emits: ["close"],
 };
 </script>

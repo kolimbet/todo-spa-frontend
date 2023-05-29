@@ -26,12 +26,12 @@
         </div>
         <div v-else>
           <!-- Request Error -->
-          <div v-if="requestErrorTrigger" class="mb-4">
-            <ValidateError
-              :error="requestError"
-              :reload-trigger="triggerForReloadingErrors"
-            />
-          </div>
+          <ErrorSingle
+            :is-error="requestErrorTrigger"
+            :error-object="requestError"
+            :reload-trigger="triggerForReloadingErrors"
+            class="mb-4"
+          />
 
           <!-- Name input -->
           <div class="mb-4">
@@ -43,14 +43,11 @@
               class="form-control"
               placeholder="Name"
             />
-            <template v-if="v$.form.name.$error">
-              <ValidateError
-                v-for="error of v$.form.name.$errors"
-                :key="error.$uid"
-                :error="error"
-                :reloadTrigger="triggerForReloadingErrors"
-              />
-            </template>
+
+            <ErrorList
+              :error-list="v$.form.name.$errors"
+              :reload-trigger="triggerForReloadingErrors"
+            />
           </div>
 
           <!-- Email input -->
@@ -63,14 +60,11 @@
               class="form-control"
               placeholder="Email"
             />
-            <template v-if="v$.form.email.$error">
-              <ValidateError
-                v-for="error of v$.form.email.$errors"
-                :key="error.$uid"
-                :error="error"
-                :reloadTrigger="triggerForReloadingErrors"
-              />
-            </template>
+
+            <ErrorList
+              :error-list="v$.form.email.$errors"
+              :reload-trigger="triggerForReloadingErrors"
+            />
           </div>
 
           <!-- Password input -->
@@ -85,14 +79,11 @@
               class="form-control"
               placeholder="Password"
             />
-            <template v-if="v$.form.password.$error">
-              <ValidateError
-                v-for="error of v$.form.password.$errors"
-                :key="error.$uid"
-                :error="error"
-                :reloadTrigger="triggerForReloadingErrors"
-              />
-            </template>
+
+            <ErrorList
+              :error-list="v$.form.password.$errors"
+              :reload-trigger="triggerForReloadingErrors"
+            />
           </div>
 
           <!-- Password Repeat input -->
@@ -107,14 +98,11 @@
               class="form-control"
               placeholder="Repeat password"
             />
-            <template v-if="v$.form.password_repeat.$error">
-              <ValidateError
-                v-for="error of v$.form.password_repeat.$errors"
-                :key="error.$uid"
-                :error="error"
-                :reloadTrigger="triggerForReloadingErrors"
-              />
-            </template>
+
+            <ErrorList
+              :error-list="v$.form.password_repeat.$errors"
+              :reload-trigger="triggerForReloadingErrors"
+            />
           </div>
 
           <!-- Submit button -->
@@ -162,7 +150,8 @@ import {
 } from "@vuelidate/validators";
 import api from "@/api.js";
 import { parseErrorObject } from "@/lib/errors.js";
-import ValidateError from "../inc/ValidateError.vue";
+import ErrorSingle from "../inc/ErrorSingle.vue";
+import ErrorList from "../inc/ErrorList.vue";
 
 function nameIsFree(value, siblings, vm) {
   let result = {
@@ -222,7 +211,7 @@ function emailIsFree(value, siblings, vm) {
 
 export default {
   name: "RegisterPage",
-  components: { ValidateError },
+  components: { ErrorSingle, ErrorList },
   setup() {
     return {
       v$: useVuelidate({

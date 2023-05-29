@@ -4,12 +4,12 @@
     class="mb-2 py-2 border border-start-0 border-end-0 border-2 border-green"
   >
     <!-- Request Error -->
-    <div v-if="requestErrorTrigger" class="mb-2 d-flex justify-content-center">
-      <ValidateError
-        :error="requestError"
-        :reloadTrigger="triggerForReloadingErrors"
-      />
-    </div>
+    <ErrorSingle
+      :is-error="requestErrorTrigger"
+      :error-object="requestError"
+      :reload-trigger="triggerForReloadingErrors"
+      class="mb-2"
+    />
 
     <!-- title -->
     <div class="mb-2">
@@ -22,14 +22,11 @@
         name="title"
         class="form-control"
       ></textarea>
-      <template v-if="v$.form.title.$error">
-        <ValidateError
-          v-for="error of v$.form.title.$errors"
-          :key="error.$uid"
-          :error="error"
-          :reloadTrigger="triggerForReloadingErrors"
-        />
-      </template>
+
+      <ErrorList
+        :error-list="v$.form.title.$errors"
+        :reload-trigger="triggerForReloadingErrors"
+      />
     </div>
 
     <div class="d-flex justify-content-between align-items-center">
@@ -62,11 +59,12 @@
 <script>
 import { useVuelidate } from "@vuelidate/core";
 import { required, minLength, maxLength } from "@vuelidate/validators";
-import ValidateError from "../inc/ValidateError.vue";
+import ErrorSingle from "../inc/ErrorSingle.vue";
+import ErrorList from "../inc/ErrorList.vue";
 
 export default {
   name: "TaskCreate",
-  components: { ValidateError },
+  components: { ErrorSingle, ErrorList },
   props: {
     isOpen: Boolean,
   },

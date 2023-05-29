@@ -1,11 +1,16 @@
 <template>
   <div>
     <TopNavigation />
-    <div
-      class="container-md mw-xl-5xl my-3 py-3 px-2 px-md-0 min-vh-50 border border-2 border-start-0 border-end-0 border-blue"
-    >
-      <RouterView />
-    </div>
+
+    <RouterView v-slot="{ Component }">
+      <Transition
+        name="slide-left"
+        mode="out-in"
+        class="container-md mw-xl-5xl my-3 py-3 px-2 px-md-0 min-vh-50 border border-2 border-start-0 border-end-0 border-blue"
+      >
+        <component :is="Component" />
+      </Transition>
+    </RouterView>
   </div>
 </template>
 

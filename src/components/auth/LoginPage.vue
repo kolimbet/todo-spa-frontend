@@ -6,12 +6,12 @@
     >
       <div class="w-percent-100 mw-md">
         <!-- Request Error -->
-        <div v-if="requestErrorTrigger" class="mb-4">
-          <ValidateError
-            :error="requestError"
-            :reload-trigger="triggerForReloadingErrors"
-          />
-        </div>
+        <ErrorSingle
+          :is-error="requestErrorTrigger"
+          :error-object="requestError"
+          :reload-trigger="triggerForReloadingErrors"
+          class="mb-4"
+        />
 
         <div class="mb-4">
           <label for="form-email" class="fs-sm text-secondary">Email</label>
@@ -22,14 +22,11 @@
             class="form-control"
             placeholder="Email"
           />
-          <template v-if="v$.form.email.$error">
-            <ValidateError
-              v-for="error in v$.form.email.$errors"
-              :key="error.$uid"
-              :error="error"
-              :reloadTrigger="triggerForReloadingErrors"
-            />
-          </template>
+
+          <ErrorList
+            :error-list="v$.form.email.$errors"
+            :reload-trigger="triggerForReloadingErrors"
+          />
         </div>
 
         <div class="mb-4">
@@ -43,14 +40,11 @@
             class="form-control"
             placeholder="Password"
           />
-          <template v-if="v$.form.password.$error">
-            <ValidateError
-              v-for="error in v$.form.password.$errors"
-              :key="error.$uid"
-              :error="error"
-              :reloadTrigger="triggerForReloadingErrors"
-            />
-          </template>
+
+          <ErrorList
+            :error-list="v$.form.password.$errors"
+            :reload-trigger="triggerForReloadingErrors"
+          />
         </div>
 
         <div class="mb-4 form-check">
@@ -108,11 +102,12 @@
 <script>
 import { useVuelidate } from "@vuelidate/core";
 import { required, email } from "@vuelidate/validators";
-import ValidateError from "../inc/ValidateError.vue";
+import ErrorSingle from "../inc/ErrorSingle.vue";
+import ErrorList from "../inc/ErrorList.vue";
 
 export default {
   name: "LoginPage",
-  components: { ValidateError },
+  components: { ErrorSingle, ErrorList },
   setup() {
     return {
       v$: useVuelidate({
