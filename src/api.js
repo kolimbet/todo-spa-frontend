@@ -185,6 +185,20 @@ const api = {
           reject(message);
         });
     }),
+  taskCounter: () =>
+    new Promise((resolve, reject) => {
+      axios
+        .get(sourceUrls.tasks + "/counter")
+        .then(({ data }) => {
+          // console.log("api->taskCounter completed successfuly", data);
+          resolve(data);
+        })
+        .catch((err) => {
+          let message = parseApiError(err);
+          // console.log("ERROR: taskCounter request error - " + message);
+          reject(message);
+        });
+    }),
 };
 
 export default api;

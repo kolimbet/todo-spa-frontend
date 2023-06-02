@@ -4,6 +4,11 @@ export default {
   namespaced: true,
   state: () => ({
     taskList: [],
+    taskCounter: {
+      total: 0,
+      active: 0,
+      completed: 0,
+    },
     filter: "all",
     filterValues: ["all", "active", "completed"],
     order: "new",
@@ -74,6 +79,16 @@ export default {
     addTask(state, newTask) {
       state.taskList.push(newTask);
     },
+    setTaskCounter(
+      state,
+      counter = {
+        total: 0,
+        active: 0,
+        completed: 0,
+      }
+    ) {
+      state.taskCounter = counter;
+    },
     setFilter(state, option) {
       if (state.filterValues.includes(option)) {
         state.filter = option;
@@ -143,6 +158,18 @@ export default {
       return api.taskCreate(task).then((newTask) => {
         commit("addTask", newTask);
       });
+    },
+
+    requestTaskCounter({ commit }) {
+      return api
+        .taskCounter()
+        .then((counter) => {
+          commit("setTaskCounter", counter);
+        })
+        .catch((err) => {
+          commit("setTaskCounter");
+          throw err;
+        });
     },
   },
 };

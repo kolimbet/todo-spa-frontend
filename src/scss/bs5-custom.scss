@@ -22,11 +22,11 @@ $theme-colors: map-merge($theme-colors, $custom-theme-colors);
 $theme-colors-rgb: map-loop($theme-colors, to-rgb, "$value");
 
 // font-sizes
-$h1-font-size: $font-size-base * 1.75 !default;
+$h1-font-size: $font-size-base * 1.6 !default;
 $h2-font-size: $font-size-base * 1.5 !default;
-$h3-font-size: $font-size-base * 1.375 !default;
-$h4-font-size: $font-size-base * 1.25 !default;
-$h5-font-size: $font-size-base * 1.125 !default;
+$h3-font-size: $font-size-base * 1.3 !default;
+$h4-font-size: $font-size-base * 1.2 !default;
+$h5-font-size: $font-size-base * 1.1 !default;
 $h6-font-size: $font-size-base !default;
 $sm-font-size: $font-size-base * 0.875 !default;
 $xs-font-size: $font-size-base * 0.75 !default;
