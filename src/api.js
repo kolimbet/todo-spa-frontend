@@ -11,6 +11,8 @@ const sourceUrls = {
   register: "/api/register",
   nameIsFree: "/api/name-is-free",
   emailIsFree: "/api/email-is-free",
+  checkUserPassword: "/api/user/check-password",
+  updateUserPassword: "/api/user/update-password",
   tasks: "/api/tasks",
 };
 
@@ -109,6 +111,34 @@ const api = {
         })
         .catch((err) => {
           let message = parseApiError(err);
+          reject(message);
+        });
+    }),
+  checkUserPassword: (password) =>
+    new Promise((resolve, reject) => {
+      axios
+        .post(sourceUrls.checkUserPassword, { password: password })
+        .then(({ data }) => {
+          // console.log("api->checkPassword completed successfully", data);
+          resolve(data);
+        })
+        .catch((err) => {
+          let message = parseApiError(err);
+          // console.log("ERROR: checkPassword request error - " + message);
+          reject(message);
+        });
+    }),
+  updateUserPassword: (form) =>
+    new Promise((resolve, reject) => {
+      axios
+        .post(sourceUrls.updateUserPassword, form)
+        .then(({ data }) => {
+          // console.log("api->updateUserPassword completed successfully", data);
+          resolve(data);
+        })
+        .catch((err) => {
+          let message = parseApiError(err);
+          // console.log("ERROR: updateUserPassword request error - " + message);
           reject(message);
         });
     }),

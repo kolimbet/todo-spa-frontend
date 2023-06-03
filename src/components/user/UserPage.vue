@@ -2,7 +2,7 @@
   <div>
     <h2 class="text-center mb-0-75rem">User Page</h2>
     <div
-      class="mb-0-75rem p-1 d-flex flex-wrap justify-content-center gap-0-75rem bg-secondary bg-opacity-75 text-white text-opacity-90"
+      class="mb-0-75rem p-1 d-flex flex-wrap justify-content-center gap-0-75rem bg-blue text-white text-opacity-90"
     >
       <template v-for="comp in userComponents" :key="comp">
         <div
@@ -14,7 +14,9 @@
         </div>
       </template>
     </div>
-    <component :is="currentTabComponent" />
+    <Transition name="slide-left" mode="out-in">
+      <component :is="currentTabComponent" @changeComponent="changeComponent" />
+    </Transition>
   </div>
 </template>
 
@@ -51,9 +53,13 @@ export default {
         this.currentTabComponent = installableComponent;
     },
     buttonClasses(testedComponent) {
-      if (testedComponent === this.currentTabComponent)
-        return "bg-secondary bg-opacity-100";
-      else "";
+      if (testedComponent === this.currentTabComponent) return "bg-blue-dark";
+      else return "";
+    },
+    changeComponent(component) {
+      console.log("changeComponent", component);
+      if (this.userComponents[component] !== "undefined")
+        this.currentTabComponent = this.userComponents[component].alias;
     },
   },
 };
