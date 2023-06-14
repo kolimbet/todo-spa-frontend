@@ -107,6 +107,7 @@ export default {
       init: false,
       addFormIsOpen: false,
 
+      processing: false,
       triggerForReloadingErrors: true,
       requestErrorTrigger: false,
       requestError: {
@@ -137,15 +138,22 @@ export default {
   },
   methods: {
     requestTaskList() {
+      if (this.processing) return false;
+      this.processing = true;
+      this.reloadRequestError();
       return this.$store
         .dispatch("task/requestTaskList")
-        .finally(() => {
-          this.reloadingErrorMessages();
-        })
         .catch((err) => {
           this.requestError.$message = err;
           this.requestErrorTrigger = true;
+        })
+        .finally(() => {
+          this.processing = false;
         });
+    },
+    reloadRequestError() {
+      this.reloadingErrorMessages();
+      this.requestErrorTrigger = false;
     },
     reloadingErrorMessages() {
       this.triggerForReloadingErrors = !this.triggerForReloadingErrors;

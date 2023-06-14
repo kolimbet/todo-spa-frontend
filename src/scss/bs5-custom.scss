@@ -11,6 +11,9 @@ $custom-theme-colors: (
   "blue": $blue-600,
   "blue-light": $blue-100,
   "blue-dark": $blue-700,
+  "blue-400": $blue-400,
+  "blue-300": $blue-300,
+  "blue-200": $blue-200,
   "green": $green-500,
   "green-light": $green-100,
   "green-dark": $green-600,
@@ -19,7 +22,7 @@ $custom-theme-colors: (
   "red-dark": $red-700,
 );
 $theme-colors: map-merge($theme-colors, $custom-theme-colors);
-$theme-colors-rgb: map-loop($theme-colors, to-rgb, "$value");
+// $theme-colors-rgb: map-loop($theme-colors, to-rgb, "$value");
 
 // font-sizes
 $h1-font-size: $font-size-base * 1.6 !default;
@@ -49,10 +52,56 @@ $font-sizes: map-merge($font-sizes, $custom-font-sizes);
 
 // For getter (bs5 grid), gap (grid), margin, padding
 $custom-spacers: (
+  "px": 1px,
   "0-75rem": $spacer * 0.75,
   "1-25rem": $spacer * 1.25,
 );
 $spacers: map-merge($spacers, $custom-spacers);
+
+// scss-docs-start position-map
+$custom-position-values: (
+  0: 0,
+  1: 0.25rem,
+  2: 0.5rem,
+  3: 0.75rem,
+  4: 1rem,
+  5: 1.25rem,
+  6: 1.5rem,
+  7: 1.75rem,
+  8: 2rem,
+  10: 2.5rem,
+  12: 3rem,
+  14: 3.5rem,
+  16: 4rem,
+  20: 5rem,
+  24: 6rem,
+  n1: -0.25rem,
+  n2: -0.5rem,
+  n3: -0.75rem,
+  n4: -1rem,
+  n5: -1.25rem,
+  n6: -1.5rem,
+  n7: -1.75rem,
+  n8: -2rem,
+  n10: -2.5rem,
+  n12: -3rem,
+  n14: -3.5rem,
+  n16: -4rem,
+  n20: -5rem,
+  n24: -6rem,
+  50percent: 50%,
+  100percent: 100%,
+) !default;
+$position-values: map-merge($custom-position-values, $position-values);
+// scss-docs-end position-map
+// z-index
+$zindex-levels: (
+  auto: auto,
+  0: 0,
+  1: 1,
+  2: 2,
+  3: 3,
+);
 
 @import "../../node_modules/bootstrap/scss/maps";
 @import "../../node_modules/bootstrap/scss/mixins";
@@ -99,10 +148,12 @@ $utilities: map-merge(
           24: 6rem,
           28: 7rem,
           32: 8rem,
+          36: 9rem,
           40: 10rem,
           48: 12rem,
           56: 14rem,
           64: 16rem,
+          72: 18rem,
           80: 20rem,
           96: 24rem,
           112: 28rem,
@@ -138,6 +189,13 @@ $utilities: map-merge(
       class: mw,
       values: (
         0: 0rem,
+        4: 1rem,
+        8: 2rem,
+        12: 3rem,
+        16: 4rem,
+        24: 6rem,
+        32: 8rem,
+        40: 10rem,
         xs: 20rem,
         sm: 24rem,
         md: 28rem,
@@ -209,6 +267,13 @@ $utilities: map-merge(
       class: mh,
       values: (
         0: 0rem,
+        4: 1rem,
+        8: 2rem,
+        12: 3rem,
+        16: 4rem,
+        24: 6rem,
+        32: 8rem,
+        40: 10rem,
         xs: 20rem,
         sm: 24rem,
         md: 28rem,
@@ -292,9 +357,25 @@ $utilities: map-merge(
         100: 1,
       ),
     ),
+    "background-color": (
+      property: background-color,
+      class: bg,
+      state: hover,
+      local-vars: (
+        "bg-opacity": 1,
+      ),
+      values:
+        map-merge(
+          $utilities-bg-colors,
+          (
+            "transparent": transparent,
+          )
+        ),
+    ),
     "bg-opacity": (
       css-var: true,
       class: bg-opacity,
+      state: hover,
       values: (
         0: 0,
         10: 0.1,
@@ -314,10 +395,17 @@ $utilities: map-merge(
       local-vars: (
         "border-opacity": 1,
       ),
-      values: $utilities-border-colors,
+      values:
+        map-merge(
+          $utilities-border-colors,
+          (
+            "transparent": transparent,
+          )
+        ),
     ),
     "border-opacity": (
       css-var: true,
+      state: hover,
       class: border-opacity,
       values: (
         0: 0,
@@ -355,6 +443,13 @@ $utilities: map-merge(
               "white-50": rgba($white, 0.5),
             )
           ),
+      ),
+    // z-index
+    "z-index":
+      (
+        property: z-index,
+        class: z,
+        values: $zindex-levels,
       ),
   )
 );

@@ -9,6 +9,16 @@
   );
 }
 
+/* Box Sizing */
+.box {
+  &-border {
+    box-sizing: border-box;
+  }
+  &-content {
+    box-sizing: content-box;
+  }
+}
+
 /* single animations */
 .fade {
   &-enter-active,
@@ -78,7 +88,7 @@ $folding-y-heights: 50, 300, 1000;
 }
 
 /* list animations */
-$list-folding-y-heights: 100;
+$list-folding-y-heights: 100, 150;
 .list-folding-y {
   @each $height in $list-folding-y-heights {
     &-#{$height} {

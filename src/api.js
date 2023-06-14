@@ -13,6 +13,8 @@ const sourceUrls = {
   emailIsFree: "/api/email-is-free",
   checkUserPassword: "/api/user/check-password",
   updateUserPassword: "/api/user/update-password",
+  userAvatar: "/api/user/avatar",
+  images: "/api/images",
   tasks: "/api/tasks",
 };
 
@@ -139,6 +141,87 @@ const api = {
         .catch((err) => {
           let message = parseApiError(err);
           // console.log("ERROR: updateUserPassword request error - " + message);
+          reject(message);
+        });
+    }),
+  /* ------------------------ Avatar ------------------------ */
+  setUserAvatar: (imageId) =>
+    new Promise((resolve, reject) => {
+      // reject("api->setUserAvatar test stopper");
+      axios
+        .post(sourceUrls.userAvatar, { id: imageId })
+        .then(({ data }) => {
+          // console.log("api->setUserAvatar completed successfully", data);
+          resolve(data);
+        })
+        .catch((err) => {
+          let message = parseApiError(err);
+          // console.log("ERROR: setUserAvatar request error - " + message);
+          reject(message);
+        });
+    }),
+  deleteUserAvatar: () =>
+    new Promise((resolve, reject) => {
+      // reject("api->deleteUserAvatar test stopper");
+      axios
+        .delete(sourceUrls.userAvatar)
+        .then(({ data }) => {
+          // console.log("api->deleteUserAvatar completed successfully", data);
+          resolve(data);
+        })
+        .catch((err) => {
+          let message = parseApiError(err);
+          // console.log("ERROR: deleteUserAvatar request error - " + message);
+          reject(message);
+        });
+    }),
+  /* ------------------------- Images ------------------------ */
+  imageList: () =>
+    new Promise((resolve, reject) => {
+      // reject("api->imageList test stopper");
+      axios
+        .get(sourceUrls.images)
+        .then(({ data }) => {
+          // console.log("api->imageList completed successfully", data);
+          resolve(data);
+        })
+        .catch((err) => {
+          let message = parseApiError(err);
+          // console.log("ERROR: imageList request error - " + message);
+          reject(message);
+        });
+    }),
+  imageStore: (image) =>
+    new Promise((resolve, reject) => {
+      // reject("api->imageStore test stopper");
+      axios
+        .post(sourceUrls.images, image, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then(({ data }) => {
+          // console.log("api->imageStore completed successfully", data);
+          resolve(data);
+        })
+        .catch((err) => {
+          let message = parseApiError(err);
+          // console.log("ERROR: imageStore request error - " + message);
+          reject(message);
+        });
+    }),
+  imageDelete: (imageId) =>
+    new Promise((resolve, reject) => {
+      // reject("api->imageDelete test stopper");
+      axios
+        .delete(sourceUrls.images + `/${imageId}`)
+        .then((/* { data } */) => {
+          // console.log("api->imageDelete completed successfully", data);
+          resolve(true);
+        })
+        .catch((err) => {
+          let message = parseApiError(err);
+          // console.log("ERROR: imageDelete request error - " + message);
           reject(message);
         });
     }),

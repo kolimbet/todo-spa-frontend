@@ -3,9 +3,10 @@ import router from "@/router";
 import api from "@/api.js";
 
 import task from "./modules/task";
+import image from "./modules/image";
 
 export default createStore({
-  modules: { task },
+  modules: { task, image },
   state: {
     authenticated: false,
     user: null,
@@ -16,6 +17,9 @@ export default createStore({
     avatarUrl(state) {
       if (state.user?.avatar) return state.user.avatar.full_url;
       return "/images/default_avatar.png";
+    },
+    avatarId(state) {
+      return state.user.avatar_id;
     },
   },
   mutations: {
@@ -94,6 +98,34 @@ export default createStore({
               reject(err);
             });
         }
+      });
+    },
+    setAvatar({ commit }, image) {
+      return new Promise((resolve, reject) => {
+        api
+          .setUserAvatar(image.id)
+          .then((data) => {
+            commit("updateAuthenticated", data);
+            resolve(data);
+          })
+          .catch((err) => {
+            console.log("storage->index->setAvatar catch", err);
+            reject(err);
+          });
+      });
+    },
+    deleteAvatar({ commit }) {
+      return new Promise((resolve, reject) => {
+        api
+          .deleteUserAvatar()
+          .then((data) => {
+            commit("updateAuthenticated", data);
+            resolve(data);
+          })
+          .catch((err) => {
+            console.log("storage->index->deleteAvatar catch", err);
+            reject(err);
+          });
       });
     },
   },

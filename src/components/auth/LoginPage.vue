@@ -145,9 +145,9 @@ export default {
   },
   methods: {
     login() {
+      if (this.processing) return false;
       this.processing = true;
-      this.reloadingErrorMessages();
-      this.requestErrorTrigger = false;
+      this.reloadRequestError();
       this.v$.$validate().then(() => {
         if (this.v$.$invalid) {
           this.processing = false;
@@ -170,6 +170,10 @@ export default {
             });
         }
       });
+    },
+    reloadRequestError() {
+      this.reloadingErrorMessages();
+      this.requestErrorTrigger = false;
     },
     reloadingErrorMessages() {
       this.triggerForReloadingErrors = !this.triggerForReloadingErrors;

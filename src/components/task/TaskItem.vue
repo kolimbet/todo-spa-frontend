@@ -127,6 +127,7 @@ export default {
       titleStartValue: null,
       editingTransition: 1000,
 
+      processing: false,
       triggerForReloadingErrors: true,
       requestErrorTrigger: false,
       requestError: {
@@ -159,6 +160,10 @@ export default {
     },
   },
   methods: {
+    reloadRequestError() {
+      this.reloadingErrorMessages();
+      this.requestErrorTrigger = false;
+    },
     reloadingErrorMessages() {
       this.triggerForReloadingErrors = !this.triggerForReloadingErrors;
     },
@@ -179,16 +184,14 @@ export default {
       }
     },
     deleting() {
-      this.reloadingErrorMessages();
-      this.requestErrorTrigger = false;
+      this.reloadRequestError();
       this.$store.dispatch("task/deleteTask", this.task).catch((err) => {
         this.requestError.$message = parseErrorObject(err);
         this.requestErrorTrigger = true;
       });
     },
     completing() {
-      this.reloadingErrorMessages();
-      this.requestErrorTrigger = false;
+      this.reloadRequestError();
       this.$store
         .dispatch("task/completeTask", {
           id: this.task.id,
@@ -213,8 +216,7 @@ export default {
     },
     editingTitleEnd() {
       if (this.titleStartValue !== this.form.title) {
-        this.reloadingErrorMessages();
-        this.requestErrorTrigger = false;
+        this.reloadRequestError();
         this.v$.$validate().then(() => {
           // console.log(this.v$, this.v$.form.title);
           if (!this.v$.$invalid) {
@@ -242,8 +244,7 @@ export default {
       this.titleStartValue = null;
       this.updateForm();
       // fix reload errors
-      this.reloadingErrorMessages();
-      this.requestErrorTrigger = false;
+      this.reloadRequestError();
     },
     updateForm() {
       this.form.title = this.task.title;

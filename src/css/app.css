@@ -4,6 +4,14 @@
   background: linear-gradient(90deg, rgb(30, 64, 175) 0%, rgb(49, 46, 129) 100%);
 }
 
+/* Box Sizing */
+.box-border {
+  box-sizing: border-box;
+}
+.box-content {
+  box-sizing: content-box;
+}
+
 /* single animations */
 .fade-enter-active, .fade-leave-active {
   transition: all 0.5s linear;
@@ -96,6 +104,27 @@
   overflow: hidden;
 }
 .list-folding-y-100-leave-active {
+  transition: all 0.5s linear;
+  overflow: hidden;
+}
+.list-folding-y-150-move {
+  transition: all 1s linear;
+}
+.list-folding-y-150-enter-from, .list-folding-y-150-leave-to {
+  max-height: 0px;
+  opacity: 0;
+  overflow: hidden;
+}
+.list-folding-y-150-enter-to, .list-folding-y-150-leave-from {
+  max-height: 150px;
+  opacity: 1;
+  overflow: auto;
+}
+.list-folding-y-150-enter-active {
+  transition: all 0.5s 0.5s linear;
+  overflow: hidden;
+}
+.list-folding-y-150-leave-active {
   transition: all 0.5s linear;
   overflow: hidden;
 }
