@@ -97,22 +97,17 @@ import TaskItem from "./TaskItem.vue";
 import TaskCreate from "./TaskCreate.vue";
 import TaskFilter from "./TaskFilter.vue";
 import ErrorSingle from "../inc/ErrorSingle.vue";
+import { RequestErrorMessage } from "@/mixins/RequestErrorMessage";
 
 export default {
   name: "TaskList",
   components: { TaskItem, TaskCreate, TaskFilter, ErrorSingle },
+  mixins: [RequestErrorMessage],
   data() {
     return {
       page: 1,
       init: false,
       addFormIsOpen: false,
-
-      processing: false,
-      triggerForReloadingErrors: true,
-      requestErrorTrigger: false,
-      requestError: {
-        $message: "",
-      },
     };
   },
   computed: {
@@ -150,13 +145,6 @@ export default {
         .finally(() => {
           this.processing = false;
         });
-    },
-    reloadRequestError() {
-      this.reloadingErrorMessages();
-      this.requestErrorTrigger = false;
-    },
-    reloadingErrorMessages() {
-      this.triggerForReloadingErrors = !this.triggerForReloadingErrors;
     },
     goNextPage() {
       if (this.hasNextPage) this.page += 1;

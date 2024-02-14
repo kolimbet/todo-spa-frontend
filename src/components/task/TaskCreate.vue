@@ -63,10 +63,12 @@ import { useVuelidate } from "@vuelidate/core";
 import { required, minLength, maxLength } from "@vuelidate/validators";
 import ErrorSingle from "../inc/ErrorSingle.vue";
 import ErrorList from "../inc/ErrorList.vue";
+import { RequestErrorMessage } from "@/mixins/RequestErrorMessage";
 
 export default {
   name: "TaskCreate",
   components: { ErrorSingle, ErrorList },
+  mixins: [RequestErrorMessage],
   props: {
     isOpen: Boolean,
   },
@@ -92,23 +94,10 @@ export default {
         title: "",
         is_completed: false,
       },
-      processing: false,
       animationTransition: 500,
-      triggerForReloadingErrors: true,
-      requestErrorTrigger: false,
-      requestError: {
-        $message: "",
-      },
     };
   },
   methods: {
-    reloadRequestError() {
-      this.reloadingErrorMessages();
-      this.requestErrorTrigger = false;
-    },
-    reloadingErrorMessages() {
-      this.triggerForReloadingErrors = !this.triggerForReloadingErrors;
-    },
     clearForm() {
       this.form.title = "";
       this.form.is_completed = false;

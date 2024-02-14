@@ -104,10 +104,12 @@ import { useVuelidate } from "@vuelidate/core";
 import { required, email } from "@vuelidate/validators";
 import ErrorSingle from "../inc/ErrorSingle.vue";
 import ErrorList from "../inc/ErrorList.vue";
+import { RequestErrorMessage } from "@/mixins/RequestErrorMessage";
 
 export default {
   name: "LoginPage",
   components: { ErrorSingle, ErrorList },
+  mixins: [RequestErrorMessage],
   setup() {
     return {
       v$: useVuelidate({
@@ -134,12 +136,6 @@ export default {
         email: "",
         password: "",
         remember: false,
-      },
-      processing: false,
-      triggerForReloadingErrors: true,
-      requestErrorTrigger: false,
-      requestError: {
-        $message: "",
       },
     };
   },
@@ -170,13 +166,6 @@ export default {
             });
         }
       });
-    },
-    reloadRequestError() {
-      this.reloadingErrorMessages();
-      this.requestErrorTrigger = false;
-    },
-    reloadingErrorMessages() {
-      this.triggerForReloadingErrors = !this.triggerForReloadingErrors;
     },
   },
 };

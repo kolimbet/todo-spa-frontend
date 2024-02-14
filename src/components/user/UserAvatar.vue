@@ -92,6 +92,7 @@
 </template>
 
 <script>
+import { RequestErrorMessage } from "@/mixins/RequestErrorMessage";
 import ImageAdd from "../image/ImageAdd.vue";
 import ImageItem from "../image/ImageItem.vue";
 import ErrorSingle from "../inc/ErrorSingle.vue";
@@ -99,17 +100,12 @@ import ErrorSingle from "../inc/ErrorSingle.vue";
 export default {
   name: "UserAvatar",
   components: { ImageItem, ErrorSingle, ImageAdd },
+  mixins: [RequestErrorMessage],
   emits: ["changeComponent"],
   data() {
     return {
       addFormIsOpen: false,
       init: false,
-      processing: false,
-      triggerForReloadingErrors: true,
-      requestErrorTrigger: false,
-      requestError: {
-        $message: "",
-      },
       clickImageTrigger: 0,
     };
   },
@@ -169,13 +165,6 @@ export default {
         .finally(() => {
           this.processing = false;
         });
-    },
-    reloadRequestError() {
-      this.reloadingErrorMessages();
-      this.requestErrorTrigger = false;
-    },
-    reloadingErrorMessages() {
-      this.triggerForReloadingErrors = !this.triggerForReloadingErrors;
     },
   },
   created() {

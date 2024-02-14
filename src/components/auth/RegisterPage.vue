@@ -152,6 +152,7 @@ import api from "@/api.js";
 import { parseErrorObject } from "@/lib/errors.js";
 import ErrorSingle from "../inc/ErrorSingle.vue";
 import ErrorList from "../inc/ErrorList.vue";
+import { RequestErrorMessage } from "@/mixins/RequestErrorMessage";
 
 function nameIsFree(value, siblings, vm) {
   let result = {
@@ -212,6 +213,7 @@ function emailIsFree(value, siblings, vm) {
 export default {
   name: "RegisterPage",
   components: { ErrorSingle, ErrorList },
+  mixins: [RequestErrorMessage],
   setup() {
     return {
       v$: useVuelidate({
@@ -259,12 +261,6 @@ export default {
         password: "",
         password_repeat: "",
       },
-      processing: false,
-      triggerForReloadingErrors: true,
-      requestErrorTrigger: false,
-      requestError: {
-        $message: "",
-      },
       registrationIsCompleted: false,
     };
   },
@@ -292,13 +288,6 @@ export default {
             });
         }
       });
-    },
-    reloadRequestError() {
-      this.reloadingErrorMessages();
-      this.requestErrorTrigger = false;
-    },
-    reloadingErrorMessages() {
-      this.triggerForReloadingErrors = !this.triggerForReloadingErrors;
     },
     goLoginPage() {
       this.$router.replace({ name: "login" });

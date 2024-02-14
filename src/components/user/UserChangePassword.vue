@@ -53,7 +53,7 @@
           <!-- New Password input -->
           <div class="mb-4">
             <label for="form-new-password" class="fs-sm text-secondary"
-              >Password</label
+              >New password</label
             >
             <input
               v-model="form.new_password"
@@ -134,6 +134,7 @@ import {
 import api from "@/api";
 import ErrorSingle from "../inc/ErrorSingle.vue";
 import ErrorList from "../inc/ErrorList.vue";
+import { RequestErrorMessage } from "@/mixins/RequestErrorMessage";
 
 function checkCurrentPassword(value, siblings, vm) {
   let result = {
@@ -173,6 +174,7 @@ function notSameAsCurrentPassword(value, siblings, vm) {
 export default {
   name: "UserChangePassword",
   components: { ErrorSingle, ErrorList },
+  mixins: [RequestErrorMessage],
   emits: ["changeComponent"],
   setup() {
     return {
@@ -219,12 +221,6 @@ export default {
         new_password: "",
         new_password_repeat: "",
       },
-      processing: false,
-      triggerForReloadingErrors: true,
-      requestErrorTrigger: false,
-      requestError: {
-        $message: "",
-      },
       changePasswordIsCompleted: false,
     };
   },
@@ -252,13 +248,6 @@ export default {
             });
         }
       });
-    },
-    reloadRequestError() {
-      this.reloadingErrorMessages();
-      this.requestErrorTrigger = false;
-    },
-    reloadingErrorMessages() {
-      this.triggerForReloadingErrors = !this.triggerForReloadingErrors;
     },
     goUserHome() {
       this.$emit("changeComponent", "home");

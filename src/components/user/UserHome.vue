@@ -41,21 +41,14 @@
 </template>
 
 <script>
+import { RequestErrorMessage } from "@/mixins/RequestErrorMessage";
 import ErrorSingle from "../inc/ErrorSingle.vue";
 
 export default {
   name: "UserHome",
   components: { ErrorSingle },
+  mixins: [RequestErrorMessage],
   emits: ["changeComponent"],
-  data() {
-    return {
-      triggerForReloadingErrors: true,
-      requestErrorTrigger: false,
-      requestError: {
-        $message: "",
-      },
-    };
-  },
   computed: {
     avatarLink() {
       return this.$store.getters.avatarUrl;
@@ -69,15 +62,11 @@ export default {
   },
   methods: {
     requestTaskCounter() {
-      this.reloadingErrorMessages();
-      this.requestErrorTrigger = false;
+      this.reloadRequestError();
       return this.$store.dispatch("task/requestTaskCounter").catch((err) => {
         this.requestError.$message = err;
         this.requestErrorTrigger = true;
       });
-    },
-    reloadingErrorMessages() {
-      this.triggerForReloadingErrors = !this.triggerForReloadingErrors;
     },
   },
   created() {

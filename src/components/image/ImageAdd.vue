@@ -54,6 +54,7 @@ import { helpers, required } from "@vuelidate/validators";
 import { nextTick } from "vue";
 import ErrorList from "../inc/ErrorList.vue";
 import ErrorSingle from "../inc/ErrorSingle.vue";
+import { RequestErrorMessage } from "@/mixins/RequestErrorMessage";
 
 function imageCheckSize(value, siblings, vm) {
   const maxSizeMB = 1;
@@ -92,6 +93,7 @@ function imageCheckType(value, siblings, vm) {
 export default {
   name: "ImageAdd",
   components: { ErrorList, ErrorSingle },
+  mixins: [RequestErrorMessage],
   props: {
     isOpen: Boolean,
   },
@@ -125,13 +127,7 @@ export default {
       form: {
         image: "",
       },
-      processing: false,
-      triggerForReloadingErrors: true,
       requestToClearForm: false,
-      requestErrorTrigger: false,
-      requestError: {
-        $message: "",
-      },
     };
   },
   methods: {
@@ -174,13 +170,6 @@ export default {
       // this.$refs.imageAddInput.value = "";
       this.form.image = "";
       this.v$.$reset();
-    },
-    reloadRequestError() {
-      this.reloadingErrorMessages();
-      this.requestErrorTrigger = false;
-    },
-    reloadingErrorMessages() {
-      this.triggerForReloadingErrors = !this.triggerForReloadingErrors;
     },
   },
   watch: {

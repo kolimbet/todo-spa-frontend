@@ -45,10 +45,13 @@
 
 <script>
 import ErrorSingle from "../inc/ErrorSingle.vue";
+import { DoubleClick } from "@/mixins/DoubleClick";
+import { RequestErrorMessage } from "@/mixins/RequestErrorMessage";
 
 export default {
   name: "ImageItem",
   components: { ErrorSingle },
+  mixins: [DoubleClick, RequestErrorMessage],
   props: {
     image: Object,
     clickTrigger: Number,
@@ -59,19 +62,6 @@ export default {
       blockPosition: null,
       isHover: false,
       isClicked: false,
-
-      actionList: ["setAvatar"],
-      lastClick: {
-        click: null,
-      },
-      maxDoubleClickInterval: 1000,
-
-      processing: false,
-      triggerForReloadingErrors: true,
-      requestErrorTrigger: false,
-      requestError: {
-        $message: "",
-      },
     };
   },
   computed: {
@@ -124,22 +114,6 @@ export default {
       this.$emit("setClickTrigger");
       this.doubleClickAction("setAvatar");
     },
-    doubleClickAction(action) {
-      if (!this.actionList.includes(action)) {
-        console.log(`doubleClickAction: unknown action '${action}'`);
-        return false;
-      }
-      const clickTime = new Date();
-      if (
-        this.lastClick[action] &&
-        clickTime - this.lastClick[action] < this.maxDoubleClickInterval
-      ) {
-        this.lastClick[action] = null;
-        this[action]();
-      } else {
-        this.lastClick[action] = clickTime;
-      }
-    },
     setAvatar() {
       if (this.processing) return false;
       this.processing = true;
@@ -176,13 +150,6 @@ export default {
         this.blockPosition = this.$refs.imageBlock.getBoundingClientRect();
       }
     },
-    reloadRequestError() {
-      this.reloadingErrorMessages();
-      this.requestErrorTrigger = false;
-    },
-    reloadingErrorMessages() {
-      this.triggerForReloadingErrors = !this.triggerForReloadingErrors;
-    },
   },
   watch: {
     clickTrigger(newId) {
@@ -197,6 +164,7 @@ export default {
     },
   },
   mounted() {
+    this.setActionList(["setAvatar"]);
     window.addEventListener("resize", this.setBlockPosition);
   },
   beforeUnmount() {

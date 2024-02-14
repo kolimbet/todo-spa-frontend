@@ -90,10 +90,13 @@ import { useVuelidate } from "@vuelidate/core";
 import { required, minLength, maxLength } from "@vuelidate/validators";
 import ErrorSingle from "../inc/ErrorSingle.vue";
 import ErrorList from "../inc/ErrorList.vue";
+import { DoubleClick } from "@/mixins/DoubleClick";
+import { RequestErrorMessage } from "@/mixins/RequestErrorMessage";
 
 export default {
   name: "TaskItem",
   components: { ErrorSingle, ErrorList },
+  mixins: [DoubleClick, RequestErrorMessage],
   props: {
     task: Object,
   },
@@ -111,14 +114,6 @@ export default {
   },
   data() {
     return {
-      actionList: ["deleting", "completing", "editingTitle"],
-      lastClick: {
-        deleting: null,
-        completing: null,
-        editingTitle: null,
-      },
-      maxDoubleClickInterval: 1000,
-
       form: {
         title: "",
       },
@@ -126,13 +121,6 @@ export default {
       editingTitleTrigger: false,
       titleStartValue: null,
       editingTransition: 1000,
-
-      processing: false,
-      triggerForReloadingErrors: true,
-      requestErrorTrigger: false,
-      requestError: {
-        $message: "",
-      },
     };
   },
   computed: {
@@ -160,29 +148,6 @@ export default {
     },
   },
   methods: {
-    reloadRequestError() {
-      this.reloadingErrorMessages();
-      this.requestErrorTrigger = false;
-    },
-    reloadingErrorMessages() {
-      this.triggerForReloadingErrors = !this.triggerForReloadingErrors;
-    },
-    doubleClickAction(action) {
-      if (!this.actionList.includes(action)) {
-        console.log(`doubleClickAction: unknown action '${action}'`);
-        return false;
-      }
-      const clickTime = new Date();
-      if (
-        this.lastClick[action] &&
-        clickTime - this.lastClick[action] < this.maxDoubleClickInterval
-      ) {
-        this.lastClick[action] = null;
-        this[action]();
-      } else {
-        this.lastClick[action] = clickTime;
-      }
-    },
     deleting() {
       this.reloadRequestError();
       this.$store.dispatch("task/deleteTask", this.task).catch((err) => {
@@ -262,7 +227,8 @@ export default {
       }
     },
   },
-  created() {
+  mounted() {
+    this.setActionList(["deleting", "completing", "editingTitle"]);
     this.updateForm();
   },
 };
