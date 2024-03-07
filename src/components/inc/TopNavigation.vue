@@ -15,6 +15,7 @@
           <span class="px-2 fw-bold fs-5">To Do</span>
         </RouterLink>
       </div>
+
       <AuthElement />
     </div>
   </div>

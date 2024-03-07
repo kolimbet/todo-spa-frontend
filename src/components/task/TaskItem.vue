@@ -117,9 +117,7 @@ export default {
       form: {
         title: "",
       },
-      requestToUpdateForm: false,
       editingTitleTrigger: false,
-      titleStartValue: null,
       editingTransition: 1000,
     };
   },
@@ -149,14 +147,25 @@ export default {
   },
   methods: {
     deleting() {
+      if (this.processing) return;
+      this.processing = true;
       this.reloadRequestError();
-      this.$store.dispatch("task/deleteTask", this.task).catch((err) => {
-        this.requestError.$message = parseErrorObject(err);
-        this.requestErrorTrigger = true;
-      });
+
+      this.$store
+        .dispatch("task/deleteTask", this.task)
+        .catch((err) => {
+          this.requestError.$message = parseErrorObject(err);
+          this.requestErrorTrigger = true;
+        })
+        .finally(() => {
+          this.processing = false;
+        });
     },
     completing() {
+      if (this.processing) return;
+      this.processing = true;
       this.reloadRequestError();
+
       this.$store
         .dispatch("task/completeTask", {
           id: this.task.id,
@@ -165,38 +174,46 @@ export default {
         .catch((err) => {
           this.requestError.$message = parseErrorObject(err);
           this.requestErrorTrigger = true;
+        })
+        .finally(() => {
+          this.processing = false;
         });
     },
     editingTitle() {
       if (this.editingTitleTrigger) return false;
-      this.titleStartValue = this.form.title;
+      this.uploadDataToForm();
+      this.reloadRequestError();
       this.editingTitleTrigger = true;
-      // fix reloading errors
-      this.reloadingErrorMessages();
-      this.requestErrorTrigger = false;
-
       setTimeout(() => {
         this.$refs.editingTitle.focus();
       }, this.editingTransition);
     },
     editingTitleEnd() {
-      if (this.titleStartValue !== this.form.title) {
+      if (this.processing) return;
+      if (this.task.title !== this.form.title) {
+        this.processing = true;
         this.reloadRequestError();
+
         this.v$.$validate().then(() => {
           // console.log(this.v$, this.v$.form.title);
-          if (!this.v$.$invalid) {
+          if (this.v$.$invalid) {
+            this.processing = false;
+          } else {
             this.$store
               .dispatch("task/updateTaskTitle", {
                 id: this.task.id,
                 title: this.form.title,
               })
               .then(() => {
+                this.v$.$reset();
                 this.editingTitleTrigger = false;
-                this.titleStartValue = null;
               })
               .catch((err) => {
                 this.requestErrorTrigger = true;
                 this.requestError.$message = err;
+              })
+              .finally(() => {
+                this.processing = false;
               });
           }
         });
@@ -205,31 +222,17 @@ export default {
       }
     },
     editingTitleCancel() {
-      this.editingTitleTrigger = false;
-      this.titleStartValue = null;
-      this.updateForm();
-      // fix reload errors
       this.reloadRequestError();
+      this.v$.$reset();
+      this.editingTitleTrigger = false;
     },
-    updateForm() {
+    uploadDataToForm() {
       this.form.title = this.task.title;
     },
   },
-  watch: {
-    task() {
-      if (this.editingTitleTrigger) this.requestToUpdateForm = true;
-      else this.updateForm();
-    },
-    editingTitleTrigger(newValue) {
-      if (newValue === false && this.requestToUpdateForm) {
-        this.requestToUpdateForm = false;
-        this.updateForm();
-      }
-    },
-  },
+  watch: {},
   mounted() {
     this.setActionList(["deleting", "completing", "editingTitle"]);
-    this.updateForm();
   },
 };
 </script>
