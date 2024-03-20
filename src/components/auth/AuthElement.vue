@@ -73,7 +73,8 @@ export default {
         .dispatch("logout")
         .then(() => {
           nextTick(() => {
-            this.$router.go(this.$route.path);
+            // this.$router.go(this.$route.path);
+            this.$router.go();
           });
         })
         .catch((err) => {

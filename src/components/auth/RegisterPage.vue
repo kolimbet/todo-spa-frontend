@@ -187,15 +187,15 @@ function nameIsFree(value, siblings, vm) {
 function emailIsFree(value, siblings, vm) {
   let result = {
     $valid: false,
-    message: "This email is already being used by another user",
-    extraParams: {},
+    message: "The Email has already been taken",
   };
   // console.log("emailIsFree", vm.v$.form.email);
   return new Promise((resolve, reject) => {
     // canceling the check if one of the previous ones is not passed
-    if (vm.v$.form.email.required.$invalid || vm.v$.form.email.email.$invalid)
-      return resolve(true);
-    else
+    if (vm.v$.form.email.required.$invalid || vm.v$.form.email.email.$invalid) {
+      result.$valid = true;
+      resolve(result);
+    } else
       api
         .emailIsFree(value)
         .then((data) => {

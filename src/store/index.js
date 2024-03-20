@@ -1,5 +1,4 @@
 import { createStore } from "vuex";
-import router from "@/router";
 import api from "@/api.js";
 
 import task from "./modules/task";
@@ -11,7 +10,6 @@ export default createStore({
     authenticated: false,
     user: null,
     initial: false,
-    startUrl: "/",
   },
   getters: {
     avatarUrl(state) {
@@ -35,27 +33,26 @@ export default createStore({
     completeStartingInitialization(state) {
       state.initial = true;
     },
-    setStartURL(state, value) {
-      state.startUrl = value;
-    },
   },
   actions: {
-    startInit({ state, commit, dispatch }) {
+    initApp({ commit, dispatch }) {
       return new Promise((resolve) => {
-        commit("setStartURL", new URL(window.location));
         setTimeout(() => {
-          dispatch("startAuth").then(() => {
-            commit("completeStartingInitialization");
-            if (state.startUrl.pathname != "/loading")
-              router.push(state.startUrl.pathname + state.startUrl.search);
-            else router.push("/");
-            resolve(true);
-          });
-        }, 2000);
+          dispatch("startAuth")
+            .then(() => {
+              commit("completeStartingInitialization");
+              resolve(true);
+            })
+            .catch((err) => {
+              console.log("store->actions->initApp() error: " + err);
+              commit("completeStartingInitialization");
+              resolve(true);
+            });
+        }, 1000);
       });
     },
     startAuth({ commit }) {
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
         api
           .checkAuth()
           .then((userData) => {
@@ -65,7 +62,7 @@ export default createStore({
           })
           .catch((err) => {
             commit("updateAuthenticated");
-            resolve(err);
+            reject(err);
           });
       });
     },

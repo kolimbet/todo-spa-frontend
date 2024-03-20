@@ -3,21 +3,11 @@ import store from "@/store";
 
 const routes = [
   {
-    path: "/loading",
-    name: "loading",
-    component: () => import("@/components/LoadingComponent.vue"),
-    meta: {
-      initFinished: false,
-      requiresAuth: false,
-    },
-  },
-  {
     path: "/login",
     name: "login",
     component: () => import("@/components/auth/LoginPage.vue"),
     meta: {
-      initFinished: true,
-      requiresAuth: false,
+      requiresAuthorization: false,
     },
   },
   {
@@ -25,8 +15,7 @@ const routes = [
     name: "register",
     component: () => import("@/components/auth/RegisterPage.vue"),
     meta: {
-      initFinished: true,
-      requiresAuth: false,
+      requiresAuthorization: false,
     },
   },
   {
@@ -34,8 +23,7 @@ const routes = [
     name: "home",
     component: () => import("@/components/task/TaskList.vue"),
     meta: {
-      initFinished: true,
-      requiresAuth: true,
+      requiresAuthorization: true,
     },
   },
   {
@@ -43,8 +31,15 @@ const routes = [
     name: "user",
     component: () => import("@/components/user/UserPage.vue"),
     meta: {
-      initFinished: true,
-      requiresAuth: true,
+      requiresAuthorization: true,
+    },
+  },
+  {
+    path: "/:pathMatch(.*)",
+    name: "not_found",
+    component: () => import("@/components/PageNotFound.vue"),
+    meta: {
+      requiresAuthorization: false,
     },
   },
 ];
@@ -56,19 +51,28 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.matched.some((record) => record.meta.initFinished)) {
-    if (!store.state.initial) next("/loading");
-    else {
-      if (to.matched.some((record) => record.meta.requiresAuth)) {
-        if (store.state.authenticated) next();
-        else next("/login");
-      } else {
-        next();
-      }
-    }
+  console.log("Routing to " + to.fullPath);
+
+  if (store.state.initial) {
+    routing(to, next);
+  } else {
+    store.dispatch("initApp").then(() => {
+      routing(to, next);
+    });
+  }
+});
+
+function routing(to, next) {
+  // console.log(`start routing(${to.fullPath})`);
+  if (to.meta.requiresAuthorization) {
+    // console.log("Сhecking Autorized", getAuthorized.value);
+    if (!store.state.authenticated) {
+      // console.log("Router requiresAuthorization check redirect to: /login");
+      next({ name: "login" });
+    } else next();
   } else {
     next();
   }
-});
+}
 
 export default router;
